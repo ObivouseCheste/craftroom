@@ -12,6 +12,17 @@ class UDPServer:
             data = self.request[0].strip()
             socket = self.request[1]
 
+            addr = self.client_address
+            msg = data.split()
+
+            if addr not in self.connections:
+                self.connections.add(addr)
+
+            #error handling
+
+            for client in self.connections:
+                socket.sendto(msg[2:], addr)
+
             print("{} wrote:".format(self.client_address[0]))
             print(data)
             #socket.sendto(data.upper().encode('UTF-8'), self.client_address)

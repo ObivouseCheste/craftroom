@@ -18,7 +18,7 @@ class PygameClient(UDPClient):
                     xy = evt.pos
                     pyg.draw.circle(self.mydots, (255, 0, 0), xy, 5, 0)
                     self.update()
-                    self.send(xy)
+                    self.send(str(xy[0]) + " " + str(xy[1]))
 
     def get_idot(xy):
         pyg.draw.circle(self.mydots, (255, 255, 255), xy, 10, 0)
