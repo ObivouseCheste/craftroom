@@ -1,5 +1,5 @@
-import UDPServer
+import udpserver
 import time
 
-UDPServer.UDPServer().go()
+udpserver.UDPServer().go()
 time.sleep(1000)

@@ -1,7 +1,7 @@
-import UDPClient
+import udpclient
 
-client = UDPClient.UDPClient()
-client.connect("whatever",12800)
+client = udpclient.UDPClient()
+client.connect("localhost",12800)
 while True:
     msg = input("Enter what to send: ")
     client.send(msg)
