@@ -8,6 +8,10 @@ class UDPServer:
         self.server = ""
 
     class ThreadedUDPHandler(socketserver.BaseRequestHandler):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.connections = set()
+        
         def handle(self):
             data = self.request[0].strip()
             socket = self.request[1]
