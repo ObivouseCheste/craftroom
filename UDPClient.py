@@ -18,4 +18,4 @@ class UDPClient:
       return False
 
   def send(self,msg):
-    self.sock.sendto(msg,(self.ip,self.port))
+    self.sock.sendto(msg.encode('UTF-8'),(self.ip,self.port))
