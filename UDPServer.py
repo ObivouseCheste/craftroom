@@ -14,15 +14,16 @@ class UDPServer:
 
             print("{} wrote:".format(self.client_address[0]))
             print(data)
-            socket.sendto(data.upper().encode('UTF-8'), self.client_address)
+            #socket.sendto(data.upper().encode('UTF-8'), self.client_address)
 
     class ThreadingUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer): pass
 
     def go(self):
-        self.server = self.ThreadingUDPServer(("localhost",9999), self.ThreadedUDPHandler)
+        self.server = self.ThreadingUDPServer(("0.0.0.0",12800), self.ThreadedUDPHandler)
         server_thread = threading.Thread(target = self.server.serve_forever)
         server_thread.daemon = True #exit when main thread exits?
         server_thread.start()
+        print(self.server.server_address)
 
     def connect_client(self, client):
         if type(client) is UDPClient:
