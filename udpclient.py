@@ -20,7 +20,9 @@ class UDPClient:
         else:
             return False
 
-      def send(self,msg, vital=True):
-          data = datapacket.DataPacket(msg, self.localseq, self.remoteseq, vital)
-          self.localseq++
-          self.sock.sendto(data,(self.ip,self.port))
+    def send(self,msg, vital=True):
+        data = datapacket.DataPacket(msg, self.localseq, self.remoteseq, vital)
+        self.localseq += 1
+        self.sock.sendto(data.serialize(),(self.ip,self.port))
+
+    def run

@@ -3,7 +3,7 @@
 class DataPacket():
     def __init__(self, msg, seq, ack, vital=False):
         #self.data += "{0:b}".format(seq) + DataPacket.programID() + msg
-        self.data = str(seq) + " " + str(ack) + " " + msg
+        self.data = "CMRM " + str(seq) + " " + str(ack) + " " + msg
         self.vital = vital
         self.msg = msg
         self.seq = seq
@@ -12,10 +12,10 @@ class DataPacket():
     def isVital(self):
         return self.vital
 
-    def message(self):
+    def getMessage(self):
         return self.msg
 
-    def sequenceNum(self):
+    def getSequenceNum(self):
         return self.seq
 
     def getAck(self):
@@ -23,3 +23,12 @@ class DataPacket():
 
     def getData(self):
         return self.data
+
+    def serialize(self):
+        return self.data.encode("UTF-8")
+
+    @classmethod
+    def deserialize(msg)
+        ds = msg.decode("UTF-8")
+        words = ds.split()
+        return DataPacket(" ".join(words[3:]), words[1], words[2])

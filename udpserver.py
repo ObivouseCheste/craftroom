@@ -1,31 +1,33 @@
 import socket
 import socketserver
 import threading
+import datapacket
 
 class UDPServer:
     def __init__(self):
-        self.connections = set()
         self.server = ""
 
     class ThreadedUDPHandler(socketserver.BaseRequestHandler):
         def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
             self.connections = set()
-        
+            super().__init__(*args, **kwargs)
+
         def handle(self):
-            data = self.request[0].strip()
+            data = datapacket.DataPacket.deserialize(self.request[0])
             socket = self.request[1]
 
             addr = self.client_address
-            msg = data.split()
+            msg = data.getMessage().split()
 
             if addr not in self.connections:
                 self.connections.add(addr)
 
             #error handling
 
+            send = " ".join(msg).encode("UTF-8")
+
             for client in self.connections:
-                socket.sendto(msg[2:], addr)
+                socket.sendto(send, addr)
 
             print("{} wrote:".format(self.client_address[0]))
             print(data)
@@ -33,7 +35,7 @@ class UDPServer:
 
     class ThreadingUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer): pass
 
-    def go(self):
+    def run(self):
         self.server = self.ThreadingUDPServer(("0.0.0.0",12800), self.ThreadedUDPHandler)
         server_thread = threading.Thread(target = self.server.serve_forever)
         server_thread.daemon = True #exit when main thread exits?
