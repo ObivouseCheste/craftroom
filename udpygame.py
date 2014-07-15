@@ -1,9 +1,15 @@
 import pygame as pyg
-from udpclient import UDPClient
+import cmenudp
+import numpy as np
 
-class PygameClient(UDPClient):
-    def __init__(self):
-        super().__init__()
+import socket
+import socketserver
+import threading
+import datapacket
+
+class PygameClient(cmenudp.CmenClient):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.screen = pyg.display.set_mode((500,500))
         self.mydots = pyg.Surface((500,500))
         self.idots = pyg.Surface((500,500))
@@ -15,10 +21,10 @@ class PygameClient(UDPClient):
                     pyg.quit()
                     sys.exit()
                 if evt.type == pyg.MOUSEBUTTONDOWN:
-                    xy = evt.pos
+                    xy = np.array(evt.pos)
                     pyg.draw.circle(self.mydots, (255, 0, 0), xy, 5, 0)
                     self.update()
-                    self.send(str(xy[0]) + " " + str(xy[1]))
+                    self.send(xy.tostring())
 
     def get_idot(xy):
         pyg.draw.circle(self.mydots, (255, 255, 255), xy, 10, 0)
@@ -29,6 +35,17 @@ class PygameClient(UDPClient):
         self.screen.blit(self.mydots, (0,0))
         pyg.display.update()
 
+class PygameHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        data = self.request[0]
+        msg = datapacket.DataPacket.deserialize(data).msg
+        xy= np.fromstring(msg)
+
+        self.server.get_idot(xy)
+        print(self.client_address[0])
+        print(xy)
 
 if __name__ == "__main__":
+    cl = PygameClient()
+    cl.connect("localhost", 12800)
     PygameClient().loop()
