@@ -24,7 +24,9 @@ class PygameClient(cmenudp.CmenClient):
                     xy = np.array(evt.pos)
                     pyg.draw.circle(self.mydots, (255, 0, 0), xy, 5, 0)
                     self.update()
+
                     self.send(xy.tostring())
+
 
     def get_idot(xy):
         pyg.draw.circle(self.mydots, (255, 255, 255), xy, 10, 0)
@@ -46,6 +48,6 @@ class PygameHandler(socketserver.BaseRequestHandler):
         print(xy)
 
 if __name__ == "__main__":
-    cl = PygameClient()
+    cl = PygameClient(("localhost",12801), PygameHandler)
     cl.connect("localhost", 12800)
-    PygameClient().loop()
+    cl.loop()

@@ -12,10 +12,11 @@ class CmenServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
         print(self.server_address)
 
 class CmenClient(CmenServer):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.connected = False
-        self.ip = "0.0.0.0"
-        self.port = 0
+        self.ip = "localhost"
+        self.port = 12800
         #create a new udp socket
         self.sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         self.localseq = 0
@@ -53,6 +54,7 @@ class FwdHandler(socketserver.BaseRequestHandler):
             self.server.connections.add(addr)
 
         for client in self.server.connections:
+            print(data)
             socket.sendto(data, addr)
 
         print(self.client_address[0])

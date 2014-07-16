@@ -6,13 +6,12 @@ class DataPacket():
         self.serialized = False
         if preserialized:
             self.data = "CMRM " + str(seq) + " " + str(ack) + " "
-            print(self.data)
             self.data = self.serialize()
-            print(self.data)
             self.data += msg
             self.serialized = True
         else:
             self.data = "CMRM " + str(seq) + " " + str(ack) + " " + msg
+        print(self.data)
         self.vital = vital
         self.msg = msg
         self.seq = seq
