@@ -34,14 +34,15 @@ class PygameClient(cmenudp.CmenClient):
 
     def update(self):
         self.screen.blit(self.idots, (0,0))
-        self.screen.blit(self.mydots, (0,0))
+        print(self.server_address)
+        #self.screen.blit(self.mydots, (0,0))
         pyg.display.update()
 
 class PygameHandler(socketserver.BaseRequestHandler):
     def handle(self):
         data = self.request[0]
-        msg = datapacket.DataPacket.deserialize(data).msg
-        xy= np.fromstring(msg)
+        #msg = datapacket.DataPacket.deserialize(data).msg
+        xy= np.fromstring(data)
 
         self.server.get_idot(xy)
         print(self.client_address[0])
@@ -50,4 +51,5 @@ class PygameHandler(socketserver.BaseRequestHandler):
 if __name__ == "__main__":
     cl = PygameClient(("localhost",12801), PygameHandler)
     cl.connect("localhost", 12800)
+    cl.run()
     cl.loop()

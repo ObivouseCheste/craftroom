@@ -6,12 +6,13 @@ class DataPacket():
         self.serialized = False
         if preserialized:
             self.data = "CMRM " + str(seq) + " " + str(ack) + " "
+            print(self.data)
             self.data = self.serialize()
+            print(self.data)
             self.data += msg
             self.serialized = True
         else:
             self.data = "CMRM " + str(seq) + " " + str(ack) + " " + msg
-        print(self.data)
         self.vital = vital
         self.msg = msg
         self.seq = seq
@@ -24,7 +25,7 @@ class DataPacket():
             return self.data
 
     @classmethod
-    def deserialize(msg):
+    def deserialize(cls, msg):
         ds = msg.decode("UTF-8")
         words = ds.split()
-        return DataPacket(" ".join(words[3:]), words[1], words[2])
+        return cls(" ".join(words[3:]), words[1], words[2])

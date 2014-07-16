@@ -55,9 +55,10 @@ class FwdHandler(socketserver.BaseRequestHandler):
 
         for client in self.server.connections:
             print(data)
-            socket.sendto(data, addr)
+            socket.sendto(data, ("localhost",12801))
 
         print(self.client_address[0])
+        print(self.client_address[1])
 
 if __name__ == "__main__":
     serv = FwdServer(("localhost",12800), FwdHandler)
