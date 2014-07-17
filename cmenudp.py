@@ -18,7 +18,6 @@ class CmenClient(CmenServer):
         self.ip = "localhost"
         self.port = 12800
         #create a new udp socket
-        self.sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         self.localseq = 0
         self.remoteseq = 0
 
@@ -34,8 +33,9 @@ class CmenClient(CmenServer):
         if type(msg) == bytes:
             ps = True
         data = datapacket.DataPacket(msg, preserialized=ps)
+        print(data.serialize())
         self.localseq += 1
-        self.sock.sendto(data.serialize(),(self.ip,self.port))
+        self.socket.sendto(data.serialize(),(self.ip,self.port))
 
 class FwdServer(CmenServer):
     def __init__(self, *args, **kwargs):
@@ -55,7 +55,7 @@ class FwdHandler(socketserver.BaseRequestHandler):
 
         for client in self.server.connections:
             print(data)
-            socket.sendto(data, ("localhost",12801))
+            socket.sendto(data, self.client_address)
 
         print(self.client_address[0])
         print(self.client_address[1])
