@@ -48,6 +48,6 @@ class PygameHandler(socketserver.BaseRequestHandler):
 
 if __name__ == "__main__":
     cl = PygameClient(("localhost",12801), PygameHandler)
-    cl.connect("184.66.98.2", 12800)
+    cl.connect("localhost", 12800)
     cl.run()
     cl.loop()
