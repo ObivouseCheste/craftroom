@@ -47,7 +47,7 @@ class PygameHandler(socketserver.BaseRequestHandler):
         self.server.get_idot(xy)
 
 if __name__ == "__main__":
-    cl = PygameClient(("localhost",12801), PygameHandler)
-    cl.connect("localhost", 12800)
+    cl = PygameClient(("0.0.0.0",12801), PygameHandler)
+    cl.connect("184.66.98.2", 12800)
     cl.run()
     cl.loop()

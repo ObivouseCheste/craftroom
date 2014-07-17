@@ -61,5 +61,5 @@ class FwdHandler(socketserver.BaseRequestHandler):
         print(self.client_address[1])
 
 if __name__ == "__main__":
-    serv = FwdServer(("localhost",12800), FwdHandler)
+    serv = FwdServer(("0.0.0.0",12800), FwdHandler)
     serv.run()
