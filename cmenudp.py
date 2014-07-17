@@ -47,7 +47,7 @@ class FwdHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         data = self.request[0]
-        socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        socket = self.request[1]
         addr = (self.client_address[0], 12801)
 
         if addr not in self.server.connections:
