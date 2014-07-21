@@ -29,17 +29,18 @@ class CmenClient(CmenServer):
         else:
             return False
 
-    def send(self, msg, vital=False):
+    def send(self, msg, vital=False, connectTransaction=False, uid=0):
         if type(msg) == bytes:
             ps = True
-        data = datapacket.DataPacket(msg, preserialized=ps)
-        print(data.serialize())
+        print(connectTransaction)
+        data = datapacket.DataPacket(msg, preserialized=ps, connectTransaction=connectTransaction, uid=uid)
         self.localseq += 1
         self.socket.sendto(data.serialize(),(self.ip,self.port))
 
 class FwdServer(CmenServer):
     def __init__(self, *args, **kwargs):
-        self.connections = set()
+        self.connections = dict()
+        self.lastconnection = -1
         super().__init__(*args, **kwargs)
 
 class FwdHandler(socketserver.BaseRequestHandler):
@@ -48,14 +49,23 @@ class FwdHandler(socketserver.BaseRequestHandler):
     def handle(self):
         data = self.request[0]
         socket = self.request[1]
-        addr = (self.client_address[0], 12801)
+        addr = (self.client_address[0], self.client_address[1])
+        dsdata = datapacket.DataPacket.deserialize(data)
+        print(self.server.connections)
 
-        if addr not in self.server.connections:
-            self.server.connections.add(addr)
+        connectrequest = True if data[4] is 0x01 else False
 
-        for client in self.server.connections:
-            print(data)
-            socket.sendto(data, client)
+        if addr not in self.server.connections.values():
+            self.server.lastconnection += 1
+            self.server.connections[self.server.lastconnection] = addr
+
+        for cid, client in self.server.connections.items():
+            if connectrequest:
+                specialdata = datapacket.DataPacket(dsdata.msg, dsdata.ack, dsdata.seq,
+                connectTransaction = True, uid=cid % 256, preserialized=True)
+                socket.sendto(specialdata.serialize(), client)
+            else:
+                socket.sendto(data, client)
 
         print(self.client_address[0])
         print(self.client_address[1])
