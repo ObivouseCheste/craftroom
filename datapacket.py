@@ -38,5 +38,5 @@ class DataPacket():
 
         :rtype : datapacket.DataPacket
         """
-        return cls(msg[9:],msg[7],msg[8], connectTransaction = True if msg[4] is 0x01 else False,
+        return cls(msg[9:],msg[7],msg[8], connectTransaction = True if msg[4] == 0x01 else False,
                    preserialized = True, uid=msg[6])

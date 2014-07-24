@@ -51,24 +51,21 @@ class FwdHandler(socketserver.BaseRequestHandler):
         socket = self.request[1]
         addr = (self.client_address[0], self.client_address[1])
         dsdata = datapacket.DataPacket.deserialize(data)
-        print(self.server.connections)
 
-        connectrequest = True if data[4] is 0x01 else False
+        connectrequest = True if data[4] == 0x01 else False
 
         if addr not in self.server.connections.values():
             self.server.lastconnection += 1
             self.server.connections[self.server.lastconnection] = addr
+            print(self.server.connections)
 
         for cid, client in self.server.connections.items():
             if connectrequest:
                 specialdata = datapacket.DataPacket(dsdata.msg, dsdata.ack, dsdata.seq,
-                connectTransaction = True, uid=cid % 256, preserialized=True)
+                connectTransaction = True, uid=self.server.lastconnection % 256, preserialized=True)
                 socket.sendto(specialdata.serialize(), client)
             else:
                 socket.sendto(data, client)
-
-        print(self.client_address[0])
-        print(self.client_address[1])
 
 if __name__ == "__main__":
     serv = FwdServer(("0.0.0.0",12800), FwdHandler)

@@ -37,14 +37,14 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                     print(msg.uid)
                     self.cconfirmed = True
                     print("Got one")
-                elif msg.msg is not self.connectseed:
+                elif msg.msg != self.connectseed:
                     print("Created:")
                     print(msg.uid)
                     self.sprites[msg.uid] = Lobby.create_sprite(img = self.icon)
             elif msg.uid in self.sprites:
                 pos = numpy.fromstring(msg.msg, dtype=float)
-                print(msg.uid)
-                print(pos)
+                #print(msg.uid)
+                #print(pos)
                 self.sprites[msg.uid].position = pos
 
         if self.cconfirmed:
@@ -62,11 +62,10 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                 self.sprite.y += -80.0 * dt
                 updated = True
             if self.keys[key.SPACE]:
-                self.sprite.x = 0
-                self.sprite.y = 0
+                self.sprite.position = (0,0)
                 updated = True
             if updated:
-                print(self.sprite.position)
+                #print(self.sprite.position)
                 self.send(numpy.array([self.sprite.x, self.sprite.y]).tostring(), uid=self.uid)
         else:
             self.time_since_attempt += dt
@@ -114,7 +113,7 @@ class LobbyHandler(socketserver.BaseRequestHandler):
 
 
 if __name__ == "__main__":
-    window = Lobby(("0.0.0.0", 12802), LobbyHandler)
+    window = Lobby(("0.0.0.0", 12801), LobbyHandler)
     window.connect("184.66.98.2", 12800)
     window.run()
     pyglet.app.run()
