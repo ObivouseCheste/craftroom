@@ -62,7 +62,8 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                 self.objects['me'].y += -80.0 * dt
                 updated = True
             if self.keys[key.SPACE]:
-                self.objects['me'].position = (0, 0)
+                self.objects['me'].x = 0
+                self.objects['me'].y = 0
                 updated = True
             if updated:
                 #print(self.objects['me'].position)
