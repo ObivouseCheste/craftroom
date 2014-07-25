@@ -14,7 +14,7 @@ class World():
 
 class WorldObject():
     def __init__(self, c=0, name=None):
-        self.col = c
+        self.colmap = c
         self.name = name
 
 
