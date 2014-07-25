@@ -40,6 +40,7 @@ class CmenClient(CmenServer):
 class FwdServer(CmenServer):
     def __init__(self, *args, **kwargs):
         self.connections = dict()
+        self.connectioncolors = dict()
         self.lastconnection = -1
         super().__init__(*args, **kwargs)
 
