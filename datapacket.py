@@ -1,11 +1,14 @@
 
 
 class DataPacket():
-    def __init__(self, msg, seq=0, ack=0, vital=False, preserialized=False):
+    def __init__(self, msg, seq=0, ack=0, vital=False, preserialized=False, connectTransaction = False, uid=0):
         #self.data += "{0:b}".format(seq) + DataPacket.programID() + msg
         self.data = bytearray()
         self.data.extend(b'CMRM')
-        self.data.extend((0x00,0x00,0x00)) #for future use
+        self.data.append(0x00 if not connectTransaction else 0x01)
+        self.data.append(0x00)
+        self.data.append(uid % 256)
+        #for future use
         self.data.append(seq % 256)
         self.data.append(ack % 256)
         #self.data.extend()
@@ -20,6 +23,8 @@ class DataPacket():
         self.msg = msg
         self.seq = seq
         self.ack = ack
+        self.connectTransaction = connectTransaction
+        self.uid = uid
 
     def serialize(self):
         if not self.serialized:
@@ -29,6 +34,9 @@ class DataPacket():
 
     @classmethod
     def deserialize(cls, msg):
-        ds = msg.decode("UTF-8")
-        words = ds.split()
-        return cls(" ".join(words[3:]), words[1], words[2])
+        """
+
+        :rtype : datapacket.DataPacket
+        """
+        return cls(msg[9:],msg[7],msg[8], connectTransaction = True if msg[4] == 0x01 else False,
+                   preserialized = True, uid=msg[6])

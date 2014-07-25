@@ -25,6 +25,7 @@ class PygameClient(cmenudp.CmenClient):
                     xy = np.array(evt.pos)
                     pyg.draw.circle(self.mydots, (255, 0, 0), xy, 5, 0)
                     self.update()
+                    print(xy.tostring())
                     self.send(xy.tostring())
 
 
@@ -41,6 +42,7 @@ class PygameHandler(socketserver.BaseRequestHandler):
     def handle(self):
         #temp jank parsing
         data = self.request[0][-8:]
+        print(data)
         xy= np.fromstring(data, dtype=int)
         print(data, xy)
 
@@ -48,6 +50,6 @@ class PygameHandler(socketserver.BaseRequestHandler):
 
 if __name__ == "__main__":
     cl = PygameClient(("0.0.0.0",12801), PygameHandler)
-    cl.connect("localhost", 12800)
+    cl.connect("184.66.98.2", 12800)
     cl.run()
     cl.loop()
