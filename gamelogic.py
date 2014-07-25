@@ -3,20 +3,19 @@ from lobby import Lobby
 
 class World():
     def __init__(self, x=80, y=60):
-        self.world = [[None for _ in range(y)] for _ in range(x)]
+        #maybe should be using sparse matrix
         self.objects = {}
 
     def __getitem__(self, item):
-        return self.world[item]
+        return self.objects[item]
 
-    def get_collsion(self):
-        col = np.array([[each.col for each in row] for row in self.world])
-        return col
+
 
 
 class WorldObject():
-    def __init__(self, c=0):
-        self.collision = c
+    def __init__(self, c=0, name=None):
+        self.col = c
+        self.name = name
 
 
 class SpaceLobby(Lobby):
@@ -24,5 +23,17 @@ class SpaceLobby(Lobby):
         super().__init__(*args, **kwargs)
         self.world = World(x, y)
 
+    def place_tile(self, x, y):
+        tilesize = 10
+        for xi in range(x-tilesize, x+tilesize):
+            for yi in range(y-tilesize, y+tilesize):
+                self.world[xi][yi] =
+
+
+
+    def dist_squared(self, obj, x, y):
+        return (obj.x - x)**2 + (obj.y - y)**2
+
     def on_mouse_press(self, x, y, button, modifiers):
-        pass
+        if self.me.dist_squared(x, y) > 900:
+            pass
