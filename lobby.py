@@ -43,6 +43,7 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                                                                 blue=msg.msg[2])
             elif msg.uid in self.objects:
                 pos = np.fromstring(msg.msg, dtype=float)
+                print(pos)
                 #print(msg.uid)
                 #print(pos)
                 self.objects[msg.uid].position = pos
@@ -62,8 +63,8 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                 self.objects['me'].y += -80.0 * dt
                 updated = True
             if self.keys[key.SPACE]:
-                self.objects['me'].x = 0
-                self.objects['me'].y = 0
+                self.objects['me'].x = 0.0
+                self.objects['me'].y = 0.0
                 updated = True
             if updated:
                 #print(self.objects['me'].position)
