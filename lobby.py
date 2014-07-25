@@ -39,7 +39,8 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                 elif msg.msg != self.connectseed:
                     print("Created:")
                     print(msg.uid)
-                    self.objects[msg.uid] = Lobby.create_sprite(img=self.icon)
+                    self.objects[msg.uid] = Lobby.create_sprite(img=self.icon, red=msg.msg[0], green=msg.msg[1],
+                                                                blue=msg.msg[2])
             elif msg.uid in self.objects:
                 pos = np.fromstring(msg.msg, dtype=float)
                 #print(msg.uid)
@@ -111,6 +112,6 @@ class LobbyHandler(socketserver.BaseRequestHandler):
 
 if __name__ == "__main__":
     window = Lobby(("0.0.0.0", 12801), LobbyHandler)
-    window.connect("0.0.0.0", 12800)
+    window.connect("184.66.98.2", 12800)
     window.run()
     pyglet.app.run()
