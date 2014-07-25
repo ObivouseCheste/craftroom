@@ -1,3 +1,6 @@
+import numpy as np
+from lobby import Lobby
+
 class World():
     def __init__(self, x=80, y=60):
         self.world = [[None for _ in range(y)] for _ in range(x)]
@@ -23,4 +26,3 @@ class SpaceLobby(Lobby):
 
     def on_mouse_press(self, x, y, button, modifiers):
         pass
-
