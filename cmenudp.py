@@ -58,6 +58,7 @@ class FwdHandler(socketserver.BaseRequestHandler):
         if addr not in self.server.connections.values():
             self.server.lastconnection += 1
             self.server.connections[self.server.lastconnection] = addr
+            self.server.connectioncolors[self.server.lastconnection] = (dsdata.msg[0], dsdata.msg[1], dsdata.msg[2])
             print(self.server.connections)
 
         for cid, client in self.server.connections.items():
@@ -65,6 +66,10 @@ class FwdHandler(socketserver.BaseRequestHandler):
                 specialdata = datapacket.DataPacket(dsdata.msg, dsdata.ack, dsdata.seq,
                 connectTransaction = True, uid=self.server.lastconnection % 256, preserialized=True)
                 socket.sendto(specialdata.serialize(), client)
+                colors = self.server.connectioncolors[cid]
+                connecteduser = datapacket.DataPacket(bytes([colors[0], colors[1], colors[2]]), dsdata.ack, dsdata.seq,
+                connectTransaction = True, uid=cid % 256, preserialized=True)
+                socket.sendto(connecteduser.serialize(), addr)
             else:
                 socket.sendto(data, client)
 
