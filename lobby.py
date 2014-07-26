@@ -105,6 +105,20 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
         sprite.color = (red, green, blue)
         return sprite
 
+    def propagated(self, id):
+        def propagated_dec(method):
+            self.methoddict[id] = method
+
+            def prop_method(instance, *args, **kwargs):
+                method(*args, **kwargs)
+                instance.send(ENCODETHISSTUFF(id, *args, **kwargs))
+            return prop_method
+        return propagated_dec
+
+    @propagated("boop")
+    def do_boop(self):
+        print("BOOOOP")
+
 
 class LobbyHandler(socketserver.BaseRequestHandler):
     def handle(self):
