@@ -27,6 +27,7 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                                                   anchor_y='center')
         self.uid = 0
         self.time_since_attempt = 0
+        self.methoddict = {}
 
     def update(self, dt):
         for msg in self.received():
