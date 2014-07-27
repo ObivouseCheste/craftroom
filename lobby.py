@@ -9,6 +9,7 @@ import datapacket
 
 
 class Lobby(cmenudp.CmenClient, pyglet.window.Window):
+    method_dict = {}
     def __init__(self, *args, **kwargs):
         cmenudp.CmenClient.__init__(self, *args, **kwargs)
         pyglet.window.Window.__init__(self)
@@ -27,7 +28,6 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                                                   anchor_y='center')
         self.uid = 0
         self.time_since_attempt = 0
-        self.methoddict = {}
 
     def update(self, dt):
         for msg in self.received():
@@ -106,9 +106,10 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
         sprite.color = (red, green, blue)
         return sprite
 
-    def propagated(self, id):
+    @classmethod
+    def propagated(cls, id):
         def propagated_dec(method):
-            self.methoddict[id] = method
+            cls.method_dict[id] = method
 
             def prop_method(instance, *args, **kwargs):
                 method(*args, **kwargs)
