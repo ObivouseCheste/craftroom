@@ -26,10 +26,10 @@ class SpaceLobby(Lobby):
         self.tile = pyglet.image.load("block.png")
         self.world = World()
         self.icon = pyglet.image.load("sprite.png")
-        self.world.keyobjs['me'] = Lobby.create_sprite(img=self.icon)
+        self.world.keyobjs['me'] = self.__class__.create_sprite(img=self.icon)
 
     def connect_client(self, msg):
-        self.objects[msg.uid] = Lobby.create_sprite(img=self.icon, red=msg.msg[0], green=msg.msg[1],
+        self.world.keyobjs[msg.uid] = self.__class__.create_sprite(img=self.icon, red=msg.msg[0], green=msg.msg[1],
                                                                 blue=msg.msg[2])
     def logic(self, dt):
         updated = False
@@ -52,6 +52,11 @@ class SpaceLobby(Lobby):
         if updated:
             #print(self.objects['me'].position)
             self.send(np.array([self.objects['me'].x, self.objects['me'].y]).tostring(), uid=self.uid)
+
+    def draw_world(self):
+        self.world.keyobjs['me'].draw()
+        for id, sprite in self.world.keyobjs.items():
+            sprite.draw()
 
     def place_tile(self, x, y):
         self.world.objects += WorldObject(self.tile, x, y)

@@ -21,7 +21,7 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
 
         self.sq = queue.Queue()
         self.cconfirmed = False
-        self.connectseed = bytes([random.randrange(256),random.randrange(256)])
+        self.connectseed = bytes([random.randrange(256),random.randrange(256),random.randrange(256)])
         self.connecting_label = pyglet.text.Label('Connecting..', font_name='Times New Roman', font_size=36,
                                                   x=self.width // 2, y=self.height // 2, anchor_x='center',
                                                   anchor_y='center')
@@ -63,14 +63,15 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
     def logic(self, dt):
         pass
 
+    def draw_world(self):
+        pass
+
     def on_draw(self):
         pyglet.clock.tick()
         self.clear()
         self.fps_display.draw()
         if self.cconfirmed:
-            self.objects['me'].draw()
-            for id, sprite in self.objects.items():
-                sprite.draw()
+            self.draw_world()
         else:
             self.connecting_label.draw()
 
@@ -97,9 +98,9 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
             return prop_method
         return propagated_dec
 
-    @propagated("boop")
-    def do_boop(self):
-        print("BOOOOP")
+    # @propagated("boop")
+    # def do_boop(self):
+    #     print("BOOOOP")
 
 
 class LobbyHandler(socketserver.BaseRequestHandler):
