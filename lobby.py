@@ -10,7 +10,6 @@ import hashlib
 
 
 class Lobby(cmenudp.CmenClient, pyglet.window.Window):
-    method_dict = {}
     def __init__(self, *args, **kwargs):
         cmenudp.CmenClient.__init__(self, *args, **kwargs)
         pyglet.window.Window.__init__(self)
@@ -21,12 +20,30 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
 
         self.sq = queue.Queue()
         self.cconfirmed = False
-        self.connectseed = bytes([random.randrange(256),random.randrange(256),random.randrange(256)])
+        self.connectseed = bytes([random.randrange(256),random.randrange(256)])
         self.connecting_label = pyglet.text.Label('Connecting..', font_name='Times New Roman', font_size=36,
                                                   x=self.width // 2, y=self.height // 2, anchor_x='center',
                                                   anchor_y='center')
         self.uid = 0
         self.time_since_attempt = 0
+        self.build_event_dict()
+        
+    def build_event_dict(self):
+        self.event_dict = {}
+        for attr in dir(self):
+            if attr[:7] == "event_":
+                method = getattr(self, attr)
+                if callable(method):
+                    m = hashlib.md5()
+                    m.update(attr[7:])
+                    h = m.digest()[:2]
+                    if h in self.event_dict:
+                        raise ValueError("HASH COLLISION: %s AND %s", (attr, self.event_dict[h]))
+                    else:
+                        self.event_dict[attr[7:]] = method
+                    
+    def event_boop(self):
+        print("booop!!")
 
     def update(self, dt):
         for msg in self.received():
@@ -49,7 +66,7 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                 self.objects[msg.uid].position = pos
 
         if self.cconfirmed:
-            self.logic(dt)
+            self.logic()
     
         else:
             self.time_since_attempt += dt
@@ -60,10 +77,7 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
     def connect_client(self, msg):
         pass
    
-    def logic(self, dt):
-        pass
-
-    def draw_world(self):
+    def logic(self):
         pass
 
     def on_draw(self):
@@ -71,7 +85,9 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
         self.clear()
         self.fps_display.draw()
         if self.cconfirmed:
-            self.draw_world()
+            self.objects['me'].draw()
+            for id, sprite in self.objects.items():
+                sprite.draw()
         else:
             self.connecting_label.draw()
 
@@ -81,27 +97,7 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                 yield self.sq.get_nowait()
             except queue.Empty:
                 break
-
-    @classmethod
-    def propagated(cls, id, encoder):
-        h = hashlib.md5()
-        h.update(id)
-        id = h.digest()[:3]
-        def propagated_dec(method):
-            if id in cls.method_dict:
-                raise ValueError(id+" COLLIDED!!!!!!!!!!!!!!!!!!!!!!!")
-            cls.method_dict[id] = method
-
-            def prop_method(instance, *args, **kwargs):
-                method(*args, **kwargs)
-                instance.send(id+encoder(*args, **kwargs))
-            return prop_method
-        return propagated_dec
-
-    # @propagated("boop")
-    # def do_boop(self):
-    #     print("BOOOOP")
-
+    
 
 class LobbyHandler(socketserver.BaseRequestHandler):
     def handle(self):
