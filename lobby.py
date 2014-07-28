@@ -29,6 +29,9 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
         self.event_dict = self.build_event_dict()
         
     def build_event_dict(self):
+        '''
+        :returns:
+        '''
         event_dict = {}
         for attr in dir(self):
             if attr[:7] == "event_":
@@ -42,9 +45,6 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                     else:
                         event_dict[attr[7:]] = method
         return event_dict
-                    
-    def event_boop(self):
-        print("booop!!")
 
     def update(self, dt):
         for msg in self.received():

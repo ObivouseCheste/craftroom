@@ -27,10 +27,12 @@ class SpaceLobby(Lobby):
         self.world = World()
         self.icon = pyglet.image.load("sprite.png")
         self.world.keyobjs['me'] = self.__class__.create_sprite(img=self.icon)
+        self.me = self.world.keyobjs['me']
 
     def connect_client(self, msg):
         self.world.keyobjs[msg.uid] = self.__class__.create_sprite(img=self.icon, red=msg.msg[0], green=msg.msg[1],
                                                                 blue=msg.msg[2])
+
     def logic(self, dt):
         updated = False
         if self.keys[key.RIGHT]:
@@ -65,7 +67,7 @@ class SpaceLobby(Lobby):
         return (obj.x - x)**2 + (obj.y - y)**2
 
     def on_mouse_press(self, x, y, button, modifiers):
-        if self.me.dist_squared(x, y) < 900:
+        if self.dist_squared(self.me, x, y) < 900:
             self.place_tile(x, y)
             
     @classmethod
@@ -81,7 +83,7 @@ class SpaceLobby(Lobby):
         return sprite
 
 if __name__ == "__main__":
-    window = Lobby(("0.0.0.0", 12801), LobbyHandler)
+    window = SpaceLobby(("0.0.0.0", 12801), LobbyHandler)
     window.connect("184.66.98.2", 12800)
     window.run()
     pyglet.app.run()
