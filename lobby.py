@@ -26,10 +26,13 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                                                   anchor_y='center')
         self.uid = 0
         self.time_since_attempt = 0
-        self.build_event_dict()
+        self.event_dict = self.build_event_dict()
         
     def build_event_dict(self):
-        self.event_dict = {}
+        '''
+        :returns:
+        '''
+        event_dict = {}
         for attr in dir(self):
             if attr[:7] == "event_":
                 method = getattr(self, attr)
@@ -37,13 +40,11 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                     m = hashlib.md5()
                     m.update(attr[7:])
                     h = m.digest()[:2]
-                    if h in self.event_dict:
-                        raise ValueError("HASH COLLISION: %s AND %s", (attr, self.event_dict[h]))
+                    if h in event_dict:
+                        raise ValueError("HASH COLLISION: %s AND %s", (attr, event_dict[h]))
                     else:
-                        self.event_dict[attr[7:]] = method
-                    
-    def event_boop(self):
-        print("booop!!")
+                        event_dict[attr[7:]] = method
+        return event_dict
 
     def update(self, dt):
         for msg in self.received():
