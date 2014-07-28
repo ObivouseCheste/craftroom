@@ -81,7 +81,7 @@ class SpaceLobby(Lobby):
         return sprite
 
 if __name__ == "__main__":
-    window = Lobby(("0.0.0.0", 12801), LobbyHandler)
+    window = SpaceLobby(("0.0.0.0", 12801), LobbyHandler)
     window.connect("184.66.98.2", 12800)
     window.run()
     pyglet.app.run()

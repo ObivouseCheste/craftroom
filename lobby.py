@@ -66,7 +66,7 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                 self.objects[msg.uid].position = pos
 
         if self.cconfirmed:
-            self.logic()
+            self.logic(dt)
     
         else:
             self.time_since_attempt += dt
@@ -77,7 +77,7 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
     def connect_client(self, msg):
         pass
    
-    def logic(self):
+    def logic(self, dt):
         pass
 
     def on_draw(self):
