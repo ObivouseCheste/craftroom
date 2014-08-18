@@ -26,25 +26,35 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                                                   anchor_y='center')
         self.uid = 0
         self.time_since_attempt = 0
-        self.event_dict = self.build_event_dict()
-        
+        self.event_dict, self.hash_dict = self.build_event_dict()
+
     def build_event_dict(self):
         '''
         :returns:
         '''
         event_dict = {}
+        hash_dict = {}
+        print("Building event dict")
         for attr in dir(self):
-            if attr[:7] == "event_":
+            if attr[:6] == "event_":
+                print(attr)
                 method = getattr(self, attr)
+                ack = None
+                if hasattr(self, "ack_"+attr[6:]):
+                    ack = getattr(self, "ack_"+attr[6:])
                 if callable(method):
                     m = hashlib.md5()
-                    m.update(attr[7:])
-                    h = m.digest()[:2]
+                    m.update(attr[6:].encode("UTF-8"))
+                    h = m.digest()[:3]
                     if h in event_dict:
                         raise ValueError("HASH COLLISION: %s AND %s", (attr, event_dict[h]))
                     else:
-                        event_dict[attr[7:]] = method
-        return event_dict
+                        print("Assigned " + str(h) + " to " + attr)
+                        if b'\xb6@\xa0' == h:
+                            print(True)
+                        hash_dict[attr] = h
+                        event_dict[h] = (method, ack)
+        return event_dict, hash_dict
 
     def update(self, dt):
         for msg in self.received():
@@ -73,7 +83,17 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
             self.time_since_attempt += dt
             if self.time_since_attempt >= 1:
                 self.time_since_attempt = 0
-                self.send(self.connectseed, connectTransaction=True)
+                # self.send(self.connectseed, connectTransaction=True)
+                self.attempt_connection()
+
+    def attempt_connection(self):
+        self.event_connect(self.connectseed)
+
+    def event_connect(self, *args, **kwargs):
+        msg = bytearray()
+        for seed in args:
+            msg += seed
+        self.send(msg=msg, msg_hash=self.hash_dict["event_connect"])
 
     def connect_client(self, msg):
         pass
