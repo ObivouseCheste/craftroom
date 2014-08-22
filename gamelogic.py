@@ -52,12 +52,14 @@ class SpaceLobby(Lobby):
             self.objects['me'].y = 0.0
             updated = True
         if updated:
-            #print(self.objects['me'].position)
+
             self.send(np.array([self.objects['me'].x, self.objects['me'].y]).tostring(), uid=self.uid)
 
     def draw_world(self):
         self.world.keyobjs['me'].draw()
-        for id, sprite in self.world.keyobjs.items():
+        for sprite in self.world.keyobjs.values():
+            sprite.draw()
+        for sprite in self.world.objects:
             sprite.draw()
 
     def place_tile(self, x, y):
@@ -70,8 +72,8 @@ class SpaceLobby(Lobby):
         if self.dist_squared(self.me, x, y) < 900:
             self.place_tile(x, y)
             
-    @classmethod
-    def create_sprite(cls, red=None, green=None, blue=None, x=50, y=50, img=None):
+    @staticmethod
+    def create_sprite(red=None, green=None, blue=None, x=50, y=50, img=None):
         if red is None:
             red = random.randint(0, 255)
         if green is None:
