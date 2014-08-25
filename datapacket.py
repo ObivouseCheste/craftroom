@@ -2,6 +2,9 @@
 
 class DataPacket():
     def __init__(self, msg, seq=0, ack=0, vital=False, msg_hash=bytes([0x00, 0x00]), uid=0):
+        """
+        this docstring should tell us about the header.
+        """
         #self.data += "{0:b}".format(seq) + DataPacket.programID() + msg
         self.data = bytearray()
         self.data.extend(b'CMRM')

@@ -52,24 +52,17 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                         print("Assigned " + str(h) + " to " + attr)
                         if b'\xb6@\xa0' == h:
                             print(True)
-                        hash_dict[attr] = h
+                        hash_dict[attr[6:]] = h
                         event_dict[h] = (method, ack)
         return event_dict, hash_dict
 
     def update(self, dt):
         for msg in self.received():
-            if msg.connectTransaction:
-                if not self.cconfirmed and msg.msg == self.connectseed:
-                    self.uid = msg.uid
-                    print(msg.uid)
-                    self.cconfirmed = True
-                    print("Got one")
-                elif msg.msg != self.connectseed:
-                    print("Created:")
-                    print(msg.uid)
-                    self.connect_client(msg)
+            event = self.event_dict[msg.msg_hash]
+            event(msg)
 
-            elif msg.uid in self.objects:
+            #wee woo wee woo gamelogic#######################################################################
+            if msg.uid in self.objects:
                 pos = np.fromstring(msg.msg, dtype=float)
                 print(pos)
                 #print(msg.uid)
@@ -87,13 +80,21 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
                 self.attempt_connection()
 
     def attempt_connection(self):
-        self.event_connect(self.connectseed)
-
-    def event_connect(self, *args, **kwargs):
         msg = bytearray()
-        for seed in args:
+        for seed in self.connectseed:
             msg += seed
-        self.send(msg=msg, msg_hash=self.hash_dict["event_connect"])
+        self.send(msg=msg, msg_hash=self.hash_dict["connect"])
+
+    def event_connect(self, msg):
+        if not self.cconfirmed and msg.msg == self.connectseed:
+            self.uid = msg.uid
+            print(msg.uid)
+            self.cconfirmed = True
+            print("Got one")
+        elif msg.msg != self.connectseed:
+            print("Created:")
+            print(msg.uid)
+            self.connect_client(msg)
 
     def connect_client(self, msg):
         pass
