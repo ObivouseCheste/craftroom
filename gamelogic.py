@@ -53,7 +53,7 @@ class SpaceLobby(Lobby):
             updated = True
         if updated:
 
-            self.send(np.array([self.objects['me'].x, self.objects['me'].y]).tostring(), uid=self.uid)
+            self.send(np.array([self.objects['me'].x, self.objects['me'].y]).tostring(), uid=self.uid, msg_hash=self.hash_dict["move"])
 
     def draw_world(self):
         self.world.keyobjs['me'].draw()
@@ -71,6 +71,14 @@ class SpaceLobby(Lobby):
     def on_mouse_press(self, x, y, button, modifiers):
         if self.dist_squared(self.me, x, y) < 900:
             self.place_tile(x, y)
+
+    def event_move(self, msg):
+        if msg.uid in self.objects:
+            pos = np.fromstring(msg.msg, dtype=float)
+            print(pos)
+            #print(msg.uid)
+            #print(pos)
+            self.objects[msg.uid].position = pos
             
     @staticmethod
     def create_sprite(red=None, green=None, blue=None, x=50, y=50, img=None):

@@ -61,13 +61,6 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
             event = self.event_dict[msg.msg_hash]
             event(msg)
 
-            #wee woo wee woo gamelogic#######################################################################
-            if msg.uid in self.objects:
-                pos = np.fromstring(msg.msg, dtype=float)
-                print(pos)
-                #print(msg.uid)
-                #print(pos)
-                self.objects[msg.uid].position = pos
 
         if self.cconfirmed:
             self.logic(dt)
