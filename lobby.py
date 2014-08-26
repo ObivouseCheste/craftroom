@@ -81,8 +81,7 @@ class Lobby(cmenudp.CmenClient, pyglet.window.Window):
 
     def attempt_connection(self):
         msg = bytearray()
-        for seed in self.connectseed:
-            msg += seed
+        msg += self.connectseed
         self.send(msg=msg, msg_hash=self.hash_dict["connect"])
 
     def event_connect(self, msg):
